@@ -4,10 +4,100 @@ matrix = [[0, 0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0, 0], 
         [0, 0, 0, 0, 0, 0, 0], 
         [0, 0, 0, 0, 0, 0, 0]]
+
+#           0  1  2  3  4  5  6
+#    5    [[0, 0, 0, 0, 0, 0, 0], 
+#    4    [0, 0, 0, 0, 0, 0, 0], 
+#    3    [0, 0, 0, 0, 0, 0, 0], 
+#    2    [0, 0, 0, 0, 0, 0, 0], 
+#    1    [0, 0, 0, 0, 0, 0, 0], 
+#    0    [0, 0, 0, 0, 0, 0, 0]]
+
+#               EN JEU
+#           1  2  3  4  5  6  7
+#    6    [[1, 0, 0, 0, 0, 0, 0], 
+#    5    [0, 2, 0, 0, 0, 0, 0], 
+#    4    [0, 0, 1, 0, 0, 0, 0], 
+#    3    [0, 0, 0, 1, 0, 0, 0], 
+#    2    [0, 0, 0, 0, 1, 0, 0], 
+#    1    [0, 0, 0, 0, 0, 1, 0]]
 ligne = 0
 colonne = 0
 conditionFinPartie = False
 conditionRejouer = True
+
+def affichage(matrix):
+    for i in range(6):
+        print("[", end='')
+        for j in range(7):
+            print(matrix[5 - i][j], end=' ')
+        print("]")
+
+def victoire(matrix, colonne, ligne):
+    compteurJ1 = 0
+    compteurJ2 = 0
+    i = 0
+    tmpLigne = ligne
+    tmpColonne = colonne
+    for i in range(6):
+        if(matrix[ligne][i] == 1):
+            compteurJ1 += 1
+        else:
+            compteurJ1 = 0
+        if(matrix[ligne][i] == 2):
+            compteurJ2 += 1
+        else:
+            compteurJ2 = 0
+        if(compteurJ1 >= 4 or compteurJ2 >= 4):
+            return(True)
+    for i in range(6):
+        if(matrix[i][colonne] == 1):
+            compteurJ1 += 1
+        else:
+            compteurJ1 = 0
+        if(matrix[i][colonne] == 2):
+            compteurJ2 += 1
+        else:
+            compteurJ2 = 0
+        if(compteurJ1 >= 4 or compteurJ2 >= 4):
+            return(True)
+    while(tmpLigne > 0 and tmpColonne > 0):
+        tmpLigne -= 1
+        tmpColonne -= 1
+    while(tmpLigne < 6 and tmpColonne < 7):
+        if(matrix[tmpLigne][tmpColonne] == 1):
+            compteurJ1 += 1
+        else:
+            compteurJ1 = 0
+        if(matrix[tmpLigne][tmpColonne] == 2):
+            compteurJ2 += 1
+        else:
+            compteurJ2 = 0
+        if(compteurJ1 >= 4 or compteurJ2 >= 4):
+            return(True)
+        tmpLigne += 1
+        tmpColonne += 1
+    tmpLigne = ligne
+    tmpColonne = colonne
+    while(tmpLigne > 0 and tmpColonne < 6):
+        tmpLigne -= 1
+        tmpColonne += 1
+    while(tmpLigne < 6 and tmpColonne >= 0):
+        if(matrix[tmpLigne][tmpColonne] == 1):
+            compteurJ1 += 1
+            print("compteurJ1 :", compteurJ1)
+            print("tmpLigne :", tmpLigne)
+            print("tmpColonne :", tmpColonne)
+        else:
+            compteurJ1 = 0
+        if(matrix[tmpLigne][tmpColonne] == 2):
+            compteurJ2 += 1
+        else:
+            compteurJ2 = 0
+        if(compteurJ1 >= 4 or compteurJ2 >= 4):
+            return(True)
+        tmpLigne += 1
+        tmpColonne -= 1
 
 while(conditionRejouer == True): #ou que la grille soit pleine
     print("Salut à tous")
@@ -32,70 +122,26 @@ while(conditionRejouer == True): #ou que la grille soit pleine
             colonne = int(input("Veuillez entrer le numéro de colonne\n"))
             colonne -= 1
             matrix[ligne][colonne] = 1
-            print(matrix)
+            affichage(matrix)
+            if(victoire(matrix, colonne, ligne) == True):
+                conditionFinPartie = True
+                print("GGGGGGGGGGGGGGGGG")
             print("Joueur 2 ?")
             ligne = int(input("Veuillez entrer le numéro de ligne\n"))
             ligne -= 1
             colonne = int(input("Veuillez entrer le numéro de colonne\n"))
             colonne -= 1
             matrix[ligne][colonne] = 2
-            print(matrix)
+            affichage(matrix)
+            if(victoire(matrix, colonne, ligne) == True):
+                conditionFinPartie = True
+                print("GGGGGGGGGGGGGGGGGGGGG")
     else:
         while(conditionFinPartie == False):
             print("Joueur 1, dans quelle case voulez-vous mettre votre jeton ?")
     conditionRejouer = False
 
-def victoire(matrix, colonne, ligne):
-    compteurJ1 = 0
-    compteurJ2 = 0
-    for i in range(matrix[ligne][i]):
-        if(matrix[ligne][i] == 1):
-            compteurJ1 += 1
-        else:
-            compteurJ1 = 0
-        if(matrix[ligne][i] == 2):
-            compteurJ2 += 1
-        else:
-            compteurJ2 = 0
-    if(compteurJ1 >= 4 or compteurJ2 >= 4):
-        return(True)
-    for i in range(matrix[i][colonne]):
-        if(matrix[i][colonne] == 1):
-            compteurJ1 += 1
-        else:
-            compteurJ1 = 0
-        if(matrix[ligne[i]] == 2):
-            compteurJ2 += 1
-        else:
-            compteurJ2 = 0
-    if(compteurJ1 >= 4 or compteurJ2 >= 4):
-        return(True)
-    if((ligne + 4 < 5) and (colonne + 4 < 6)):
-        for i in range(matrix[ligne + i][colonne + i]):
-            if(matrix[ligne + i][colonne + i] == 1):
-                compteurJ1 += 1
-            else:
-                compteurJ1 = 0
-            if(matrix[ligne + i][colonne + i] == 2):
-                compteurJ2 += 1
-            else:
-                compteurJ2 = 0
-    if(compteurJ1 >= 4 or compteurJ2 >= 4):
-        return(True)
-    if((ligne - 4 > 0) and (colonne - 4 > 0)):
-        for i in range(matrix[ligne - i][colonne - i]):
-            if(matrix[ligne - i][colonne - i] == 1):
-                compteurJ1 += 1
-            else:
-                compteurJ1 = 0
-            if(matrix[ligne - i][colonne - i] == 2):
-                compteurJ2 += 1
-            else:
-                compteurJ2 = 0
-    if(compteurJ1 >= 4 or compteurJ2 >= 4):
-        return(True)
-    #il manque la diagonale en haut à gauche et en bas à droite
-    if(compteurJ1 >= 4 or compteurJ2 >= 4):
-        return(True)
-    else:
-        return(False)
+    # à faire :
+    #     - pour l'utilisateur : il ne doit mettre que les colonnes pour jouer et donc faire coulisser les pièces
+    #     - ne pas pouvoir remplacer une pièce déjà mise
+    #     - quand un des 2 joueurs gagnent une partie, la partie s'arrête
