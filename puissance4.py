@@ -1,3 +1,5 @@
+import random
+
 matrix=[[0, 0, 0, 0, 0, 0, 0], 
         [0, 0, 0, 0, 0, 0, 0], 
         [0, 0, 0, 0, 0, 0, 0], 
@@ -23,6 +25,7 @@ matrix=[[0, 0, 0, 0, 0, 0, 0],
 #    1    [0, 0, 0, 0, 0, 0, 0]]
 ligne = 0
 colonne = 0
+dernierTour = [[],[]]
 conditionFinPartie = False
 conditionRejouer = True
 print("Salut à tous")
@@ -112,6 +115,49 @@ def trouverLigne(matrix, colonne):
         ligne += 1
     return(ligne)
 
+def colonneVide(matrix):
+    colVide = []
+    tmp = 0
+    for i in range (7):
+        for j in range (6):
+            if(matrix[j][i] == 0 and tmp == 0):
+                colVide.append(i)
+                tmp = 1
+        tmp = 0
+    return(colVide)
+
+def finDePartie(matrix, dernierTour):
+    return victoire(matrix,dernierTour[0][1],dernierTour[0][0]) or victoire(matrix,dernierTour[1][1],dernierTour[1][0]) or testMatrixPleine(matrix)
+
+def scoreDernierTour(matrix, dernierTour, joueur):
+    score = 0
+    jetons = 0
+    jetonsAdv = 0
+    if(joueur == 1):
+        jetons = 1
+        jetonsAdv = 2
+    else:
+        jetons = 2
+        jetonsAdv = 1
+    
+    if(victoire(matrix, dernierTour[0][1], dernierTour[0][0])):
+    
+
+
+
+def minmax(matrix, profondeur, maximinzingPlayer, dernierTour):
+    colVide = colonneVide(matrix)
+    if profondeur == 0 or finDePartie(matrix, colonne,ligne):
+        if finDePartie(matrix, dernierTour):
+            if victoire(matrix,dernierTour[0][1],dernierTour[0][0]):
+                return -100000000000
+            if victoire(matrix,dernierTour[1][1],dernierTour[1][0]):
+                return -100000000000
+            else:
+                return 0
+        else :
+            return 
+
 def jouerTour(matrix, joueur):
     error = True
     if(joueur == 1):    
@@ -121,6 +167,7 @@ def jouerTour(matrix, joueur):
             colonne = int(input("Veuillez entrer le numéro de colonne\n"))
             colonne -= 1
             ligne = trouverLigne(matrix, colonne)
+            dernierTour[0] = [ligne,colonne]
             if(matrix[ligne][colonne] == 1 or matrix[ligne][colonne] == 2):
                 error = True
                 print("Il y a déjà un jeton dans cette case, veuillez rejouer votre tour")
@@ -132,6 +179,7 @@ def jouerTour(matrix, joueur):
             colonne = int(input("Veuillez entrer le numéro de colonne\n"))
             colonne -= 1
             ligne = trouverLigne(matrix, colonne)
+            dernierTour[1] = [ligne,colonne]
             if(matrix[ligne][colonne] == 1 or matrix[ligne][colonne] == 2):
                 error = True
                 print("Il y a déjà un jeton dans cette case, veuillez rejouer votre tour")
@@ -184,6 +232,17 @@ def viderMatrix():
         [0, 0, 0, 0, 0, 0, 0]]
     return(matrix)
 
+def tourIAFacile(matrix):
+    tmpColonne = random.randint(0, 6)
+    tmpLigne = trouverLigne(matrix, tmpColonne)
+    error = True
+    while(error == True):
+        error = False
+        if(matrix[tmpLigne][tmpColonne] == 1 or matrix[tmpLigne][tmpColonne] == 2):
+            error = True
+            print(error)
+    matrix[tmpLigne][tmpColonne] = 2
+
 while(conditionRejouer == True): #ou que la grille soit pleine
     mode = choixModeDeJeu()
     if(mode == 0):
@@ -195,14 +254,33 @@ while(conditionRejouer == True): #ou que la grille soit pleine
                 print("GGGGGGGGGGGGGGGGG")
             if(conditionFinPartie == False):
                 jouerTour(matrix, 2)
-                affichage(matrix)
                 if(victoire(matrix, colonne, ligne) == True or testMatrixPleine(matrix) == False):
                     conditionFinPartie = True
                     print("GGGGGGGGGGGGGGGGGGGGG")
+            affichage(matrix)
     else:
+        print("Veuillez choisir le niveau de difficulté")
+        diff = -1
+        while(diff != 0 and diff != 1 and diff != 2):
+            diff = int(input("Tapez 0 : Facile, 1 : Moyen, 2 : Difficile"))
         while(conditionFinPartie == False):
-            print("")
-            #implémenter joueur vs IA
+            if(diff == 0):
+                print("Vous avez choisi la difficulté Facile")
+                jouerTour(matrix, 1)
+                if(victoire(matrix, colonne, ligne) == True or testMatrixPleine(matrix) == False):
+                    conditionFinPartie = True
+                    print("GGGGGGGGGGGGGGGGG")
+                if(conditionFinPartie == False):
+                    tourIAFacile(matrix)
+                    print("L'IA a joué")
+                    if(victoire(matrix, colonne, ligne) == True or testMatrixPleine(matrix) == False):
+                        conditionFinPartie = True
+                        print("GGGGGGGGGGGGGGGGGGGGG")
+                affichage(matrix)
+            elif(diff == 1):
+                print("Vous avez choisi la difficulté Moyenne")
+            else:
+                print("Vous avez choisi la difficulté Difficile")  
     conditionRejouer = rejouer()
     if(conditionRejouer == True):
         matrix = viderMatrix()
