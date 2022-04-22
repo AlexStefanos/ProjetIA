@@ -47,7 +47,7 @@ def scoreLunette(fenetre, joueur):
     elif fenetre.count(joueur) == 2 and fenetre.count(0) == 2:
         scoreL += 2
     if fenetre.count(joueur_ad) == 3 and fenetre.count(0) == 1:
-        scoreL -= 25
+        scoreL -= 4
     return scoreL
 
 def scoreTotal(matrix, joueur):
@@ -81,7 +81,7 @@ def minimax(matrix, profondeur, maximizingPlayer, dernierTour):
         if finDePartie(matrix, dernierTour):
             if victoire(matrix,dernierTour[1][1],dernierTour[1][0]):
                 return (None, 100000000000000)
-            if victoire(matrix,dernierTour[0][1],dernierTour[0][0]):
+            elif victoire(matrix,dernierTour[0][1],dernierTour[0][0]):
                 return (None, -100000000000000)
             else:
                 return (None, 0)
@@ -91,11 +91,12 @@ def minimax(matrix, profondeur, maximizingPlayer, dernierTour):
         valeur = -math.inf
         colonne = random.choice(colonneDisponible(matrix))
         for col in colonneDisponible(matrix):
-            dernierTour[1][1] = col
-            dernierTour[1][0] = ligneDisponible(matrix, dernierTour[1][1])
+            tmpDernierTour = copy.deepcopy(dernierTour)
+            tmpDernierTour[1][1] = col
+            tmpDernierTour[1][0] = ligneDisponible(matrix, tmpDernierTour[1][1])
             tmpMatrix = copy.deepcopy(matrix)
-            jouerTour(tmpMatrix,2, dernierTour[1][0], dernierTour[1][1])
-            nouveauScore = minimax(tmpMatrix, profondeur-1,False,dernierTour)[1]
+            jouerTour(tmpMatrix,2, tmpDernierTour[1][0], tmpDernierTour[1][1])
+            nouveauScore = minimax(tmpMatrix, profondeur-1,False,tmpDernierTour)[1]
             if nouveauScore > valeur:
                 valeur = nouveauScore
                 colonne = col
@@ -104,11 +105,12 @@ def minimax(matrix, profondeur, maximizingPlayer, dernierTour):
         valeur = math.inf
         colonne = random.choice(colonneDisponible(matrix))
         for col in colonneDisponible(matrix):
-            dernierTour[0][1] = col
-            dernierTour[0][0] = ligneDisponible(matrix, dernierTour[0][1])
+            tmpDernierTour = copy.deepcopy(dernierTour)
+            tmpDernierTour[0][1] = col
+            tmpDernierTour[0][0] = ligneDisponible(matrix, tmpDernierTour[0][1])
             tmpMatrix = copy.deepcopy(matrix)
-            jouerTour(tmpMatrix,1, dernierTour[0][0], dernierTour[0][1])
-            nouveauScore = minimax(tmpMatrix, profondeur-1,True,dernierTour)[1]
+            jouerTour(tmpMatrix,1, tmpDernierTour[0][0], tmpDernierTour[0][1])
+            nouveauScore = minimax(tmpMatrix, profondeur-1,True,tmpDernierTour)[1]
             if nouveauScore < valeur:
                 valeur = nouveauScore
                 colonne = col
@@ -119,7 +121,7 @@ def elagage_alpha_beta(matrix, profondeur, maximizingPlayer, dernierTour, alpha,
         if finDePartie(matrix, dernierTour):
             if victoire(matrix,dernierTour[1][1],dernierTour[1][0]):
                 return (None, 100000000000000)
-            if victoire(matrix,dernierTour[0][1],dernierTour[0][0]):
+            elif victoire(matrix,dernierTour[0][1],dernierTour[0][0]):
                 return (None, -100000000000000)
             else:
                 return (None, 0)
@@ -129,11 +131,12 @@ def elagage_alpha_beta(matrix, profondeur, maximizingPlayer, dernierTour, alpha,
         valeur = -math.inf
         colonne = random.choice(colonneDisponible(matrix))
         for col in colonneDisponible(matrix):
-            dernierTour[1][1] = col
-            dernierTour[1][0] = ligneDisponible(matrix, dernierTour[1][1])
+            tmpDernierTour = copy.deepcopy(dernierTour)
+            tmpDernierTour[1][1] = col
+            tmpDernierTour[1][0] = ligneDisponible(matrix, tmpDernierTour[1][1])
             tmpMatrix = copy.deepcopy(matrix)
-            jouerTour(tmpMatrix,2, dernierTour[1][0], dernierTour[1][1])
-            nouveauScore = elagage_alpha_beta(tmpMatrix, profondeur-1,False,dernierTour,alpha,beta)[1]
+            jouerTour(tmpMatrix,2, tmpDernierTour[1][0], tmpDernierTour[1][1])
+            nouveauScore = elagage_alpha_beta(tmpMatrix, profondeur-1,False,tmpDernierTour,alpha,beta)[1]
             if nouveauScore > valeur:
                 valeur = nouveauScore
                 colonne = col
@@ -145,11 +148,13 @@ def elagage_alpha_beta(matrix, profondeur, maximizingPlayer, dernierTour, alpha,
         valeur = math.inf
         colonne = random.choice(colonneDisponible(matrix))
         for col in colonneDisponible(matrix):
-            dernierTour[0][1] = col
-            dernierTour[0][0] = ligneDisponible(matrix, dernierTour[0][1])
+            tmpDernierTour = copy.deepcopy(dernierTour)
+            tmpDernierTour[0][1] = col
+            tmpDernierTour[0][0] = ligneDisponible(matrix, tmpDernierTour[0][1])
             tmpMatrix = copy.deepcopy(matrix)
-            jouerTour(tmpMatrix,1, dernierTour[0][0], dernierTour[0][1])
-            nouveauScore = elagage_alpha_beta(tmpMatrix, profondeur-1,True,dernierTour,alpha,beta)[1]
+            jouerTour(tmpMatrix,1, tmpDernierTour[0][0], tmpDernierTour[0][1])
+            
+            nouveauScore = elagage_alpha_beta(tmpMatrix, profondeur-1,True,tmpDernierTour,alpha,beta)[1]
             if nouveauScore < valeur:
                 valeur = nouveauScore
                 colonne = col
@@ -162,9 +167,16 @@ def affichage(matrix):
     for i in range(6):
         print("                     [", end='')
         for j in range(7):
-            print(matrix[5 - i][j], end=' ')
+            if(matrix[5 - i][j] == 1):
+                print('X', end='')
+            elif(matrix[5 - i][j] == 2):
+                print('O', end='')
+            else:
+                print(' ', end='')
+            print(' ', end='')
         print("]")
-    print("                      1 2 3 4 5 6 7")
+    print("                      1 2 3 4 5 6 7\n")
+    print("          Joueur 1 -> X        Joueur 2 -> O\n\n")
 
 def victoire(matrix, colonne, ligne):
     compteurJ1 = 0
@@ -182,7 +194,9 @@ def victoire(matrix, colonne, ligne):
                 compteurJ2 += 1
             else:
                 compteurJ2 = 0
-            if(compteurJ1 >= 4 or compteurJ2 >= 4):
+            if(compteurJ1 >= 4 and matrix[ligne][colonne] == 1):
+                return(True)
+            elif(compteurJ2 >= 4 and matrix[ligne][colonne] == 2):
                 return(True)
             tmpColonne += 1
         tmpLigne += 1
@@ -200,7 +214,9 @@ def victoire(matrix, colonne, ligne):
             compteurJ2 += 1
         else:
             compteurJ2 = 0
-        if(compteurJ1 >= 4 or compteurJ2 >= 4):
+        if(compteurJ1 >= 4 and matrix[ligne][colonne] == 1):
+                return(True)
+        elif(compteurJ2 >= 4 and matrix[ligne][colonne] == 2):
             return(True)
         tmpLigne += 1
     tmpLigne = ligne
@@ -219,7 +235,9 @@ def victoire(matrix, colonne, ligne):
             compteurJ2 += 1
         else:
             compteurJ2 = 0
-        if(compteurJ1 >= 4 or compteurJ2 >= 4):
+        if(compteurJ1 >= 4 and matrix[ligne][colonne] == 1):
+                return(True)
+        elif(compteurJ2 >= 4 and matrix[ligne][colonne] == 2):
             return(True)
         tmpLigne += 1
         tmpColonne += 1
@@ -239,7 +257,9 @@ def victoire(matrix, colonne, ligne):
             compteurJ2 += 1
         else:
             compteurJ2 = 0
-        if(compteurJ1 >= 4 or compteurJ2 >= 4):
+        if(compteurJ1 >= 4 and matrix[ligne][colonne] == 1):
+                return(True)
+        elif(compteurJ2 >= 4 and matrix[ligne][colonne] == 2):
             return(True)
         tmpLigne += 1
         tmpColonne -= 1
@@ -417,7 +437,6 @@ while(conditionRejouer == True): #ou que la grille soit pleine
             affichage(matrix)
             dernierTour[0] = jouerTour(matrix, 1)
             affichage(matrix)
-            print("colonne = " + str(dernierTour[0][1])+" ligne = "+str(dernierTour[0][0]))
             if(victoire(matrix, dernierTour[0][1], dernierTour[0][0]) == True or testMatrixPleine(matrix) == True):
                 conditionFinPartie = True
                 print("Le joueur 1 a gagné")
@@ -446,7 +465,7 @@ while(conditionRejouer == True): #ou que la grille soit pleine
                     print("Le joueur 1 a gagné")
                 if(conditionFinPartie == False):
                     dernierTour[1] = tourIAFacile(matrix)
-                    print("L'IA a joué")
+                    print("L'IA a joué colonne : " + str(dernierTour[1][1] + 1))
                     if(victoire(matrix, dernierTour[1][1], dernierTour[1][0]) == True or testMatrixPleine(matrix) == True):
                         conditionFinPartie = True
                         print("L'IA a gagné")
@@ -460,12 +479,13 @@ while(conditionRejouer == True): #ou que la grille soit pleine
             affichage(matrix)
             while(conditionFinPartie == False):
                 dernierTour[0] = jouerTour(matrix, 1)
+              
                 if(victoire(matrix, dernierTour[0][1], dernierTour[0][0]) == True or testMatrixPleine(matrix) == True):
                     conditionFinPartie = True
                     print("Le joueur 1 a gagné")
                 if(conditionFinPartie == False):
                     dernierTour[1] = tourIAMoyen(matrix,dernierTour)
-                    print("L'IA a joué")
+                    print("L'IA a joué colonne : " + str(dernierTour[1][1] + 1))
                     if(victoire(matrix, dernierTour[1][1], dernierTour[1][0]) == True or testMatrixPleine(matrix) == True):
                         conditionFinPartie = True
                         print("L'IA a gagné")
@@ -484,7 +504,7 @@ while(conditionRejouer == True): #ou que la grille soit pleine
                     print("Le joueur 1 a gagné")
                 if(conditionFinPartie == False):
                     dernierTour[1] = tourIADifficile(matrix,dernierTour)
-                    print("L'IA a joué")
+                    print("L'IA a joué colonne : " + str(dernierTour[1][1] + 1))
                     if(victoire(matrix, dernierTour[1][1], dernierTour[1][0]) == True or testMatrixPleine(matrix) == True):
                         conditionFinPartie = True
                         print("L'IA a gagné")
