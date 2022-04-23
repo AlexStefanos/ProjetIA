@@ -41,13 +41,13 @@ def scoreLunette(fenetre, joueur):
         joueur_ad = 2
     
     if fenetre.count(joueur) == 4:
-        scoreL += 100
+        scoreL += 200
     elif fenetre.count(joueur) == 3 and fenetre.count(0) == 1:
-        scoreL += 5
+        scoreL += 10
     elif fenetre.count(joueur) == 2 and fenetre.count(0) == 2:
-        scoreL += 2
+        scoreL += 4
     if fenetre.count(joueur_ad) == 3 and fenetre.count(0) == 1:
-        scoreL -= 4
+        scoreL -= 8
     return scoreL
 
 def scoreTotal(matrix, joueur):
@@ -57,7 +57,7 @@ def scoreTotal(matrix, joueur):
     for ligne in range(6):
         colonneMilieu.append(matrix[ligne][3])   
     compteurMilieu = colonneMilieu.count(joueur)
-    score += compteurMilieu * 3
+    score += compteurMilieu * 6
     for liste in matrix:
         for colonne in range(7-3):
             fenetre = [liste[colonne],liste[colonne+1],liste[colonne+2],liste[colonne+3]]
@@ -176,7 +176,6 @@ def affichage(matrix):
             print(' ', end='')
         print("]")
     print("                      1 2 3 4 5 6 7\n")
-    print("          Joueur 1 -> X        Joueur 2 -> O\n\n")
 
 def victoire(matrix, colonne, ligne):
     compteurJ1 = 0
@@ -405,16 +404,11 @@ def viderMatrix():
     return(matrix)
 
 def tourIAFacile(matrix):
-    tmpColonne = random.randint(0, 6)
-    tmpLigne = trouverLigne(matrix, tmpColonne)
-    erreur = True
-    while(erreur == True):
-        erreur = False
-        if(matrix[tmpLigne][tmpColonne] == 1 or matrix[tmpLigne][tmpColonne] == 2):
-            erreur = True
-            print(erreur)
-    matrix[tmpLigne][tmpColonne] = 2
-    return [tmpLigne,tmpColonne]
+    tmpColonne, minimax_score = minimax(matrix, 1,True,dernierTour)
+    if(tmpColonne != None):
+        tmpLigne = trouverLigne(matrix, tmpColonne)
+        matrix[tmpLigne][tmpColonne] = 2
+        return [tmpLigne,tmpColonne]
 
 def tourIAMoyen(matrix,dernierTour):
     tmpColonne, minimax_score = minimax(matrix, 3,True,dernierTour)
@@ -435,8 +429,10 @@ while(conditionRejouer == True): #ou que la grille soit pleine
     if(mode == 0):
         while(conditionFinPartie == False):
             affichage(matrix)
+            print("          Joueur 1 -> X        Joueur 2 -> O\n\n")
             dernierTour[0] = jouerTour(matrix, 1)
             affichage(matrix)
+            print("          Joueur 1 -> X        Joueur 2 -> O\n\n")
             if(victoire(matrix, dernierTour[0][1], dernierTour[0][0]) == True or testMatrixPleine(matrix) == True):
                 conditionFinPartie = True
                 print("Le joueur 1 a gagné")
@@ -446,6 +442,7 @@ while(conditionRejouer == True): #ou que la grille soit pleine
                     conditionFinPartie = True
                     print("Le joueur 2 a gagné")
             affichage(matrix)
+            print("          Joueur 1 -> X        Joueur 2 -> O\n\n")
     else:
         print("Veuillez choisir un niveau de difficulté parmis :")
         print("Facile - Tapez 0")
@@ -458,6 +455,7 @@ while(conditionRejouer == True): #ou que la grille soit pleine
         if(diff == 0):
             print("Vous avez choisi la difficulté Facile")
             affichage(matrix)
+            print("          Joueur 1 -> X             IA -> O\n\n")
             while(conditionFinPartie == False):
                 dernierTour[0] = jouerTour(matrix, 1)
                 if(victoire(matrix, dernierTour[0][1], dernierTour[0][0]) == True or testMatrixPleine(matrix) == True):
@@ -470,6 +468,7 @@ while(conditionRejouer == True): #ou que la grille soit pleine
                         conditionFinPartie = True
                         print("L'IA a gagné")
                 affichage(matrix)
+                print("          Joueur 1 -> X             IA -> O\n\n")
             conditionRejouer = rejouer()
             if(conditionRejouer == True):
                 matrix = viderMatrix()
@@ -477,6 +476,7 @@ while(conditionRejouer == True): #ou que la grille soit pleine
         elif(diff == 1):
             print("Vous avez choisi la difficulté Moyenne")
             affichage(matrix)
+            print("          Joueur 1 -> X             IA -> O\n\n")
             while(conditionFinPartie == False):
                 dernierTour[0] = jouerTour(matrix, 1)
               
@@ -490,6 +490,7 @@ while(conditionRejouer == True): #ou que la grille soit pleine
                         conditionFinPartie = True
                         print("L'IA a gagné")
                 affichage(matrix)
+                print("          Joueur 1 -> X             IA -> O\n\n")
             conditionRejouer = rejouer()
             if(conditionRejouer == True):
                 matrix = viderMatrix()
@@ -497,6 +498,7 @@ while(conditionRejouer == True): #ou que la grille soit pleine
         elif(diff == 2):
             print("Vous avez choisi la difficulté Difficile")
             affichage(matrix)
+            print("          Joueur 1 -> X             IA -> O\n\n")
             while(conditionFinPartie == False):
                 dernierTour[0] = jouerTour(matrix, 1)
                 if(victoire(matrix, dernierTour[0][1], dernierTour[0][0]) == True or testMatrixPleine(matrix) == True):
@@ -509,6 +511,7 @@ while(conditionRejouer == True): #ou que la grille soit pleine
                         conditionFinPartie = True
                         print("L'IA a gagné")
                 affichage(matrix)
+                print("          Joueur 1 -> X             IA -> O\n\n")
             conditionRejouer = rejouer()
             if(conditionRejouer == True):
                 matrix = viderMatrix()
